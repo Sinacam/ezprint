@@ -5,8 +5,7 @@ ezprint is what printing should've always looked like.
 ````c++
 struct Point { int x, y; };
 std::vector<Point> v{{1, 2}, {3, 4}};
-ez::println(v);
-// prints {{1 2} {3 4}}
+ez::println(v);  // prints {{1 2} {3 4}}
 ````
 
 Plug and play, concise, cross-platform.
