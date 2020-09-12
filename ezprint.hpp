@@ -15,13 +15,13 @@ namespace ez
     namespace detail
     {
         template <typename F, size_t... Is>
-        auto index_over(F&& f, std::index_sequence<Is...>)
+        inline auto index_over(F&& f, std::index_sequence<Is...>)
         {
             return std::forward<F>(f)(std::integral_constant<size_t, Is>{}...);
         }
 
         template <size_t N, typename F>
-        auto index_upto(F&& f)
+        inline auto index_upto(F&& f)
         {
             return index_over(std::forward<F>(f), std::make_index_sequence<N>{});
         }
@@ -41,10 +41,10 @@ namespace ez
         using stream_t = decltype(std::declval<std::ostream&>() << std::declval<T>());
 
         template <typename T>
-        void fprint_aggregate(std::ostream&, T&&);
+        inline void fprint_aggregate(std::ostream&, T&&);
 
         template <typename T>
-        void fprint(std::ostream& os, T&& t)
+        inline void fprint(std::ostream& os, T&& t)
         {
             using rT = std::remove_reference_t<T>;
             if constexpr(std::experimental::is_detected_v<stream_t, T>)
@@ -100,19 +100,19 @@ namespace ez
         using ubiq_t = ubiq;
 
         template <typename T, typename... Ubiqs>
-        constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{Ubiqs{}...})>
+        inline constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{Ubiqs{}...})>
         {
             sz = sizeof...(Ubiqs);
         }
 
         template <typename T, typename, typename... Ubiqs>
-        constexpr auto count_r(size_t& sz, float)
+        inline constexpr auto count_r(size_t& sz, float)
         {
             count_r<T, Ubiqs...>(sz, 0);
         }
 
         template <typename T, size_t... Is>
-        constexpr auto count(std::index_sequence<Is...>)
+        inline constexpr auto count(std::index_sequence<Is...>)
         {
             size_t sz;
             count_r<T, ubiq_t<Is>...>(sz, 0);
@@ -120,7 +120,7 @@ namespace ez
         }
 
         template <typename T>
-        constexpr auto count()
+        inline constexpr auto count()
         {
             return count<T>(std::make_index_sequence<sizeof(T)>{});
         }
@@ -129,13 +129,13 @@ namespace ez
         using count_t = std::integral_constant<size_t, count<T>()>;
 
         template <typename T>
-        void fprint_aggregate(std::ostream& os, T&& t)
+        inline void fprint_aggregate(std::ostream& os, T&& t)
         {
             fprint(os, as_tuple(t, count_t<std::remove_reference_t<T>>{}));
         }
 
         template <typename T, typename... Ts>
-        void fprint(std::ostream& os, T&& t, Ts&&... ts)
+        inline void fprint(std::ostream& os, T&& t, Ts&&... ts)
         {
             fprint(os, t);
             (fprint(os << ' ', ts), ...);
@@ -143,33 +143,33 @@ namespace ez
     } // namespace detail
 
     template <typename... Ts>
-    void fprint(std::ostream& os, Ts&&... ts)
+    inline void fprint(std::ostream& os, Ts&&... ts)
     {
         detail::fprint(os, std::forward<Ts>(ts)...);
     }
 
     template <typename... Ts>
-    void fprintln(std::ostream& os, Ts&&... ts)
+    inline void fprintln(std::ostream& os, Ts&&... ts)
     {
         fprint(os, std::forward<Ts>(ts)...);
         os << '\n';
     }
 
     template <typename... Ts>
-    void print(Ts&&... ts)
+    inline void print(Ts&&... ts)
     {
         fprint(std::cout, std::forward<Ts>(ts)...);
     }
 
     template <typename... Ts>
-    void println(Ts&&... ts)
+    inline void println(Ts&&... ts)
     {
         fprint(std::cout, std::forward<Ts>(ts)...);
         std::cout << '\n';
     }
 
     template <typename... Ts>
-    std::string sprint(Ts&&... ts)
+    inline std::string sprint(Ts&&... ts)
     {
         std::stringstream ss;
         fprint(ss, std::forward<Ts>(ts)...);

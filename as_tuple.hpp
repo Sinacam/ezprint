@@ -7,14 +7,14 @@
 namespace ez::detail
 {
     template <typename T>
-    auto as_tuple(T&& t, std::integral_constant<size_t, 0>)
+    inline auto as_tuple(T&& t, std::integral_constant<size_t, 0>)
     {
         return std::tuple{};
     }
 
 #define DEFINE_AS_TUPLE(N, ...)                                                                    \
     template <typename T>                                                                          \
-    auto as_tuple(T&& t, std::integral_constant<size_t, N>)                                        \
+    inline auto as_tuple(T&& t, std::integral_constant<size_t, N>)                                 \
     {                                                                                              \
         auto&& [__VA_ARGS__] = t;                                                                  \
         return std::forward_as_tuple(__VA_ARGS__);                                                 \
