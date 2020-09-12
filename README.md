@@ -39,7 +39,7 @@ It just work.
 
 # Usage
 
-ezprint prints _streamable_ types, types that can be streamed through `std::ostream&` and their composition.
+ezprint prints [_streamable types_](#Streamable-Types), types that can be streamed through `std::ostream&` and their composition.
 
 ````c++
 ez::fprint(os, args...)
