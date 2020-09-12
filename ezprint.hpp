@@ -120,6 +120,8 @@ namespace ez
                     }
                     else
                         fprint(os, x);
+
+                    i++;
                 }
                 os << '}';
             }
