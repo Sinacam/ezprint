@@ -4,8 +4,8 @@ ezprint is what printing should've always looked like.
 
 ````c++
 struct Point { int x, y; };
-std::map<std::string, Point> vec = {{"a", {1, 2}}, {"b", {3, 4}}};
-ez::println(vec);
+std::map<std::string, Point> m = {{"a", {1, 2}}, {"b", {3, 4}}};
+ez::println(m);
 // prints {a: {1 2}  b: {4 5}}
 ````
 
