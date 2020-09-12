@@ -14,7 +14,7 @@ Plug and play, arbitrary composition, concise, cross-platform.
 ### Easy.
 
 # Installation
-Just `#include "ezprint.hpp"`. Requires C++17.
+ezprint is header only, just `#include "ezprint.hpp"`. Requires C++17.
 
 # Examples
 
