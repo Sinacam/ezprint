@@ -10,8 +10,6 @@ ez::println(v);  // prints {{1 2} {3 4}}
 
 Plug and play, concise, cross-platform.
 
-### Easy.
-
 # Installation
 ezprint is header only, just `#include "ezprint.hpp"`. Requires C++17.
 
