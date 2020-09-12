@@ -14,60 +14,112 @@ namespace ez
 {
     namespace detail
     {
+        using std::size_t;
+
+        // indexing helper, see index_upto
         template <typename F, size_t... Is>
-        inline auto index_over(F&& f, std::index_sequence<Is...>)
+        inline constexpr auto index_over(F&& f, std::index_sequence<Is...>)
         {
             return std::forward<F>(f)(std::integral_constant<size_t, Is>{}...);
         }
 
+        // indexing helper, use as
+        //      index_upto<N>([&](auto... is){});
+        // where is are integral constants in [0, N).
         template <size_t N, typename F>
-        inline auto index_upto(F&& f)
+        inline constexpr auto index_upto(F&& f)
         {
             return index_over(std::forward<F>(f), std::make_index_sequence<N>{});
         }
 
+        // ubiq is used for scanning aggregate fields
+        struct ubiq
+        {
+            template <typename T>
+            operator T();
+        };
+
+        // ubiq_t is used for exapnding indeices into ubiq packs
+        template <size_t>
+        using ubiq_t = ubiq;
+
+        // base case of counting fields
+        // selected only when the ubiqs pack is the same length as the fields of T
+        template <typename T, typename... Ubiqs>
+        inline constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{Ubiqs{}...})>
+        {
+            sz = sizeof...(Ubiqs);
+        }
+
+        // recursion for counting fields, taking off one ubiq at a time
+        // selected only when the base case cannot be selected
+        // float parameter used to prefer base case in overload resolution
+        template <typename T, typename, typename... Ubiqs>
+        inline constexpr auto count_r(size_t& sz, float)
+        {
+            count_r<T, Ubiqs...>(sz, 0);
+        }
+
+        // returns number of fields in T
+        // number of fields in T muts be less than sizeof(T)
+        template <typename T>
+        inline constexpr auto count()
+        {
+            return index_upto<sizeof(T)>([](auto... is) {
+                size_t sz;
+                count_r<T, ubiq_t<is>...>(sz, 0);
+                return sz;
+            });
+        }
+
+        template <typename T>
+        using count_t = std::integral_constant<size_t, count<T>()>;
+
         using std::begin;
+        using std::end;
+        using std::get;
+
+        template <typename T>
+        using stream_t = decltype(std::declval<std::ostream&>() << std::declval<T>());
         template <typename T>
         using begin_t = decltype(begin(std::declval<T>()));
-        using std::end;
         template <typename T>
         using end_t = decltype(end(std::declval<T>()));
-        using std::get;
-        template <typename T>
-        using tuple_size_t = typename std::tuple_size<T>::type;
         template <typename T>
         using mapped_type = typename T::mapped_type;
         template <typename T>
-        using stream_t = decltype(std::declval<std::ostream&>() << std::declval<T>());
-
-        template <typename T>
-        inline void fprint_aggregate(std::ostream&, T&&);
+        using tuple_size_t = typename std::tuple_size<T>::type;
 
         template <typename T>
         inline void fprint(std::ostream& os, T&& t)
         {
+            // T is always a lvalue reference
             using rT = std::remove_reference_t<T>;
+
+            // order of if is important, the desired behaviour is to supply alternative
+            // printing formats only when the most natural isn't available
             if constexpr(std::experimental::is_detected_v<stream_t, T>)
                 os << t;
             else if constexpr(std::experimental::is_detected_v<begin_t, T> &&
                               std::experimental::is_detected_v<end_t, T>)
             {
-                auto b = begin(t);
-                auto e = end(t);
                 int i = 0;
                 os << '{';
-                for(; b != e; i++, b++)
+                for(auto& x : t)
                 {
                     if(i > 0)
                         os << ' ';
+
+                    // this is a somewhat special case, where the presence of mapped_type is
+                    // taken as being an associative container
                     if constexpr(std::experimental::is_detected_v<mapped_type, rT>)
                     {
-                        fprint(os, b->first);
+                        fprint(os, x.first);
                         os << ": ";
-                        fprint(os, b->second);
+                        fprint(os, x.second);
                     }
                     else
-                        fprint(os, *b);
+                        fprint(os, x);
                 }
                 os << '}';
             }
@@ -85,53 +137,9 @@ namespace ez
                     os << "{}";
             }
             else if constexpr(std::is_aggregate_v<rT>)
-                fprint_aggregate(os, t);
+                fprint(os, as_tuple(t, count_t<rT>{}));
             else
                 os << "!(UNKNOWN TYPE)";
-        }
-
-        struct ubiq
-        {
-            template <typename T>
-            operator T();
-        };
-
-        template <size_t>
-        using ubiq_t = ubiq;
-
-        template <typename T, typename... Ubiqs>
-        inline constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{Ubiqs{}...})>
-        {
-            sz = sizeof...(Ubiqs);
-        }
-
-        template <typename T, typename, typename... Ubiqs>
-        inline constexpr auto count_r(size_t& sz, float)
-        {
-            count_r<T, Ubiqs...>(sz, 0);
-        }
-
-        template <typename T, size_t... Is>
-        inline constexpr auto count(std::index_sequence<Is...>)
-        {
-            size_t sz;
-            count_r<T, ubiq_t<Is>...>(sz, 0);
-            return sz;
-        }
-
-        template <typename T>
-        inline constexpr auto count()
-        {
-            return count<T>(std::make_index_sequence<sizeof(T)>{});
-        }
-
-        template <typename T>
-        using count_t = std::integral_constant<size_t, count<T>()>;
-
-        template <typename T>
-        inline void fprint_aggregate(std::ostream& os, T&& t)
-        {
-            fprint(os, as_tuple(t, count_t<std::remove_reference_t<T>>{}));
         }
 
         template <typename T, typename... Ts>

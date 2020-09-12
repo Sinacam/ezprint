@@ -6,17 +6,26 @@
 
 namespace ez::detail
 {
+    // as_tuple returns the fields of an aggregate as a tuple, in order
     template <typename T>
     inline auto as_tuple(T&& t, std::integral_constant<size_t, 0>)
     {
         return std::tuple{};
     }
 
+    // Overlaying a tuple onto the object violates strict-aliasing, requires a custom tuple
+    // implementation to ensure layout and has problems with nested/enum/non-pod types.
+    // In short, it was a very risky way of doing things unsatisfactorily prior C++17.
+    // So instead we brute force with "all" possible field counts with structured bindings.
+    // Unfortunately, this means we have a limit on field counts.
+    // Current limit of 64 has absolutely no reason whatsoever, 42 might have been better. Ah well.
+    // The macro is undefined at the end.
+    // Returns the fields as a tuple of lvalue references to them, in order.
 #define DEFINE_AS_TUPLE(N, ...)                                                                    \
     template <typename T>                                                                          \
     inline auto as_tuple(T&& t, std::integral_constant<size_t, N>)                                 \
     {                                                                                              \
-        auto&& [__VA_ARGS__] = t;                                                                  \
+        auto& [__VA_ARGS__] = t;                                                                   \
         return std::forward_as_tuple(__VA_ARGS__);                                                 \
     }
 
