@@ -9,7 +9,7 @@ ez::println(v);
 // prints {{1 2} {3 4}}
 ````
 
-Plug and play, arbitrary composition, concise, cross-platform.
+Plug and play, concise, cross-platform.
 
 ### Easy.
 
