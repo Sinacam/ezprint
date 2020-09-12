@@ -31,8 +31,9 @@ ez::println(std::tuple{Point{1, 2}, "3"s, 4.0});  // {{1 2} 3 4}
 struct Rec { Point a, b; };
 ez::println(Rec{{1, 2}, {3, 4}});  // {{1 2} {3 4}}
 
-ez::println(std::tuple{Rec{1, 2, 3, 4}, "5", 6.0, "7"s,
-                       std::pair{std::tuple{8}, std::tuple{Point{10, 11}, "12"sv}}});
+ez::println(
+  std::tuple{Rec{1, 2, 3, 4}, "5", 6.0, "7"s, std::pair{std::tuple{8}, std::tuple{Point{10, 11}, "12"sv}}}
+);
 // {{{1 2} {3 4}} 5 6 7 {{8} {{10 11} 12}}}
 ````
 
