@@ -18,7 +18,7 @@ namespace ez
 
         // indexing helper, see index_upto
         template <typename F, size_t... Is>
-        inline constexpr auto index_over(F&& f, std::index_sequence<Is...>)
+        inline constexpr decltype(auto) index_over(F&& f, std::index_sequence<Is...>)
         {
             return std::forward<F>(f)(std::integral_constant<size_t, Is>{}...);
         }
@@ -27,7 +27,7 @@ namespace ez
         //      index_upto<N>([&](auto... is){});
         // where is are integral constants in [0, N).
         template <size_t N, typename F>
-        inline constexpr auto index_upto(F&& f)
+        inline constexpr decltype(auto) index_upto(F&& f)
         {
             return index_over(std::forward<F>(f), std::make_index_sequence<N>{});
         }
@@ -39,7 +39,7 @@ namespace ez
             operator T();
         };
 
-        // ubiq_t is used for exapnding indeices into ubiq packs
+        // ubiq_t is used for exapnding indices into ubiq packs
         template <size_t>
         using ubiq_t = ubiq;
 
