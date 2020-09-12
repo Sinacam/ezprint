@@ -36,7 +36,7 @@ ez::println(
 );  // {{{1 2} {3 4}} 5 6 7 {{8} {{10 11} 12}}}
 ````
 
-It just work.
+It just works.
 
 # Usage
 
@@ -80,3 +80,6 @@ An unstreamable type is printed as an error string. This makes it possible to pr
 * ezprint is standard compliant and has no undefined behaviour.
 
 * ezprint has no dependencies beyond the standard library.
+
+# Acknowledgements
+Inspiration behind the reflection is by [Antony Polukhin](https://www.youtube.com/watch?v=abdeAew3gmQ).
