@@ -46,7 +46,7 @@ ez::fprint(os, args...)
 ez::fprintln(os, args...)
 ````
 
-Prints `args` to the `os`. The suffix `ln` adds a newline at the end.
+Prints `args` to `os`. The suffix `ln` adds a newline at the end.
 
 ````c++
 ez::print(args...)
@@ -72,6 +72,10 @@ A streamable type is one of the following.
 
 An unstreamable type is printed as an error string. This makes it possible to print types composed of both streamable and unstreamable types.
 
-# Limits
+# Remarks
 
-An aggregate can have at most 64 data members. This is controlled by the implementation in `as_tuple.hpp`.
+* An aggregate can have at most 64 data members. This is controlled by the implementation in `as_tuple.hpp`.
+
+* ezprint is standard compliant and has no undefined behaviour (by itself).
+
+* ezprint has no dependencies beyond the standard library.
