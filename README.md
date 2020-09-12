@@ -4,9 +4,9 @@ ezprint is what printing should've always looked like.
 
 ````c++
 struct Point { int x, y; };
-std::map<std::string, Point> m = {{"a", {1, 2}}, {"b", {3, 4}}};
-ez::println(m);
-// prints {a: {1 2}  b: {4 5}}
+std::vector<Point> v{{1, 2}, {3, 4}};
+ez::println(v);
+// prints {{1 2} {3 4}}
 ````
 
 Plug and play, arbitrary composition, concise, cross-platform.
@@ -27,6 +27,8 @@ ez::println(std::array{1, 2, 3, 4});    // {1 2 3 4}
 ez::println(std::vector{1, 2, 3});      // {1 2 3}
 
 ez::println(std::tuple{Point{1, 2}, "3"s, 4.0});  // {{1 2} 3 4}
+
+ez::println(std::map<std::string, Point>{{"a", {1, 2}}, {"b", {3, 4}}});  // {a: {1 2}  b: {4 5}}
 
 struct Rec { Point a, b; };
 ez::println(Rec{{1, 2}, {3, 4}});  // {{1 2} {3 4}}
