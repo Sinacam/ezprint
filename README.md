@@ -76,6 +76,6 @@ An unstreamable type is printed as an error string. This makes it possible to pr
 
 * An aggregate can have at most 64 data members. This is controlled by the implementation in `as_tuple.hpp`.
 
-* ezprint is standard compliant and has no undefined behaviour (by itself).
+* ezprint is standard compliant and has no undefined behaviour.
 
 * ezprint has no dependencies beyond the standard library.
