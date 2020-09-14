@@ -8,7 +8,7 @@ namespace ez::detail
 {
     // as_tuple returns the fields of an aggregate as a tuple, in order
     template <typename T>
-    inline auto as_tuple(T&& t, std::integral_constant<size_t, 0>)
+    inline auto as_tuple(T&&, std::integral_constant<size_t, 0>)
     {
         return std::tuple{};
     }
