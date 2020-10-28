@@ -79,6 +79,10 @@ namespace ez
         using std::end;
         using std::get;
 
+        template <typename T, typename... Chars>
+        inline constexpr bool is_string_of_v = (std::is_same_v<std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>, Chars> || ...);
+        template <typename T>
+        inline constexpr bool is_string_v = is_string_of_v<T, char, wchar_t, char8_t, char16_t, char32_t>;
         template <typename T>
         using stream_t = decltype(std::declval<std::ostream&>() << std::declval<T>());
         template <typename T>
@@ -98,7 +102,7 @@ namespace ez
 
             // order of if is important, the desired behaviour is to supply alternative
             // printing formats only when the most natural isn't available
-            if constexpr(std::experimental::is_detected_v<stream_t, T> && !std::is_array_v<rT>)
+            if constexpr(std::experimental::is_detected_v<stream_t, T> && (!std::is_array_v<rT> || is_string_v<rT>))
                 os << t;
             else if constexpr(std::experimental::is_detected_v<begin_t, T> &&
                               std::experimental::is_detected_v<end_t, T>)
