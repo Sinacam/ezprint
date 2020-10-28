@@ -5,13 +5,10 @@ ezprint is what printing should've always looked like.
 ````c++
 struct Point { int x, y; };
 std::vector<Point> v{{1, 2}, {3, 4}};
-ez::println(v);
-// prints {{1 2} {3 4}}
+ez::println(v);  // prints {{1 2} {3 4}}
 ````
 
 Plug and play, concise, cross-platform.
-
-### Easy.
 
 # Installation
 ezprint is header only, just `#include "ezprint.hpp"`. Requires C++17.
@@ -45,7 +42,7 @@ ez::println(
 
 # Usage
 
-ezprint prints [_streamable types_](#Streamable-Types), types that can be streamed through `std::ostream&` and their composition.
+ezprint prints [_streamable types_](#Streamable-Types), types that can be streamed through `std::ostream&`, and their composition.
 
 ````c++
 ez::fprint(os, args...)
