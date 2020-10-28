@@ -6,6 +6,8 @@
 
 namespace ez::detail
 {
+    inline constexpr size_t max_fields = 64;
+
     // as_tuple returns the fields of an aggregate as a tuple, in order
     template <typename T>
     inline auto as_tuple(T&&, std::integral_constant<size_t, 0>)

@@ -65,7 +65,7 @@ namespace ez
         template <typename T>
         inline constexpr auto count()
         {
-            return index_upto<sizeof(T)>([](auto... is) {
+            return index_upto<std::min(sizeof(T), max_fields)>([](auto... is) {
                 size_t sz;
                 count_r<T, ubiq_t<is>...>(sz, 0);
                 return sz;
@@ -98,7 +98,7 @@ namespace ez
 
             // order of if is important, the desired behaviour is to supply alternative
             // printing formats only when the most natural isn't available
-            if constexpr(std::experimental::is_detected_v<stream_t, T>)
+            if constexpr(std::experimental::is_detected_v<stream_t, T> && !std::is_array_v<rT>)
                 os << t;
             else if constexpr(std::experimental::is_detected_v<begin_t, T> &&
                               std::experimental::is_detected_v<end_t, T>)
