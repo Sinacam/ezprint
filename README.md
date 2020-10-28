@@ -38,7 +38,7 @@ ez::println(
 );  // {{{1 2} {3 4}} 5 6 7 {{8} {{10 11} 12}}}
 ````
 
-[It just works](https://wandbox.org/permlink/LRwmlDBGCRlPsWWm).
+[It just works](https://wandbox.org/permlink/98gWcS8kMGbau7TG).
 
 # Usage
 
