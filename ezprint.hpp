@@ -340,6 +340,8 @@ namespace ez
             fprint(os, t);
             (fprint(os << ' ', ts), ...);
         }
+
+        inline void fprint(std::ostream&) {}
     } // namespace detail
 
     template <typename... Ts>
