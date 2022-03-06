@@ -25,7 +25,7 @@ ez::println(std::vector{1, 2, 3});      // {1 2 3}
 
 ez::println(std::tuple{Point{1, 2}, "3"s, 4.0});  // {{1 2} 3 4}
 
-ez::println(std::map<std::string, Point>{{"a", {1, 2}}, {"b", {3, 4}}});  // {a: {1 2}  b: {4 5}}
+ez::println(std::map<std::string, Point>{{"a", {1, 2}}, {"b", {3, 4}}});  // {a: {1 2}  b: {3 4}}
 
 struct Rec { Point a, b; };
 ez::println(Rec{{1, 2}, {3, 4}});  // {{1 2} {3 4}}
