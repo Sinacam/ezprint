@@ -295,7 +295,7 @@ namespace ez
             {
                 int i = 0;
                 os << '{';
-                for(auto& x : t)
+                for(auto&& x : t)
                 {
                     if(i > 0)
                         os << ' ';
