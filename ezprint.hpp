@@ -265,6 +265,10 @@ namespace ez
         using std::end;
         using std::get;
 
+        #if __cpp_char8_t < 201811L
+            using char8_t = char;
+        #endif
+
         template <typename T, typename... Chars>
         inline constexpr bool is_string_of_v = (std::is_same_v<std::remove_cv_t<std::remove_pointer_t<std::decay_t<T>>>, Chars> || ...);
         template <typename T>
