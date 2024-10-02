@@ -8,6 +8,13 @@
 #include <type_traits>
 #include <utility>
 
+#if __cpp_lib_format >= 201907L
+#define EZPRINT_ENABLE_FORMAT 1
+#include<format>
+#else
+#define EZPRINT_ENABLE_FORMAT 0
+#endif // __cpp_lib_format >= 201907L
+
 namespace ez::detail
 {
     inline constexpr size_t max_fields = 64;
@@ -346,6 +353,7 @@ namespace ez
         }
 
         inline void fprint(std::ostream&) {}
+
     } // namespace detail
 
     template <typename... Ts>
@@ -381,6 +389,80 @@ namespace ez
         fprint(ss, std::forward<Ts>(ts)...);
         return ss.str();
     }
+
+#if EZPRINT_ENABLE_FORMAT
+    namespace detail
+    {
+#if __cplusplus >= 202302L
+        template<typename T>
+        concept formattable = std::formattable<T, char>;
+#else
+        template<typename T, typename = void>
+        struct formattable_t : std::false_type
+        {
+        };
+
+        template<typename T>
+        struct formattable_t<T, std::void_t<
+            decltype(std::formatter<std::remove_cvref_t<T>>().format(
+                std::declval<std::remove_cvref_t<T>>(), std::declval<std::format_context&>()
+            ))
+        >> : std::true_type
+        {
+        };
+
+        template<typename T>
+        inline constexpr bool formattable = formattable_t<T>::value;
+#endif // __cplusplus >= 202302L
+        template<typename T>
+        decltype(auto) ez_arg(T&& x)
+        {
+            if constexpr(formattable<T>)
+                return std::forward<T>(x);
+            else
+                return sprint(x);
+        }
+
+        template<typename T>
+        using ez_arg_value_t = decltype(ez_arg(std::declval<T>()));
+    }
+
+    template<typename... Args>
+    using format_string_of = std::format_string<detail::ez_arg_value_t<std::remove_reference_t<Args>>...>;
+
+    template<typename... Args>
+    inline std::string sprintf(format_string_of<Args...> fmt, Args&&... args)
+    {
+        auto args_tuple = std::forward_as_tuple(detail::ez_arg(args)...);
+        return std::vformat(
+            fmt.get(),
+            std::apply([](auto&... args) { return std::make_format_args(args...); }, args_tuple)
+        );
+    }
+
+    template<typename... Args>
+    inline void fprintf(std::ostream& os, format_string_of<Args...> fmt, Args&&... args)
+    {
+        auto args_tuple = std::forward_as_tuple(detail::ez_arg(args)...);
+        os << std::vformat(
+            fmt.get(),
+            std::apply([](auto&... args) { return std::make_format_args(args...); }, args_tuple)
+        );
+    }
+
+    template<typename... Args>
+    inline void printf(format_string_of<Args...> fmt, Args&&... args)
+    {
+        auto args_tuple = std::forward_as_tuple(detail::ez_arg(args)...);
+        std::cout << std::vformat(
+            fmt.get(),
+            std::apply([](auto&... args) { return std::make_format_args(args...); }, args_tuple)
+        );
+    }
+
+#endif // EZPRINT_ENABLE_FORMAT
+#undef EZPRINT_ENABLE_FORMAT
+
 } // namespace ez
 
 #endif // EZPRINT_HPP_INCLUDED
