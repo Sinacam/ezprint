@@ -259,7 +259,7 @@ namespace ez
         inline constexpr auto count()
         {
             return index_upto<std::min(sizeof(T), max_fields)>([](auto... is) {
-                size_t sz;
+                size_t sz = 0;
                 count_r<T, ubiq_t<is>...>(sz, 0);
                 return sz;
             });
