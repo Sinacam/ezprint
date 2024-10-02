@@ -232,7 +232,7 @@ namespace ez
         // base case of counting fields
         // selected only when the ubiqs pack is the same length as the fields of T
         template <typename T, typename... Ubiqs>
-        inline constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{Ubiqs{}...})>
+        inline constexpr auto count_r(size_t& sz, int) -> std::void_t<decltype(T{{Ubiqs{}}...})>
         {
             sz = sizeof...(Ubiqs);
         }

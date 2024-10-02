@@ -75,6 +75,17 @@ A streamable type is one of the following.
 
 An unstreamable type is printed as an error string. This makes it possible to print types composed of both streamable and unstreamable types.
 
+An exception is aggregates that have members which are empty aggregates, e.g.
+```c++
+struct empty_t {};
+struct pathological_t
+{
+    empty_t e;
+    int i;
+};
+```
+`ez::println` will fail to print `pathological_t`.
+
 # Remarks
 
 * An aggregate can have at most 64 data members. This is controlled by the implementation by `DEFINE_AS_TUPLE`.
