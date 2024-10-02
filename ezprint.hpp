@@ -460,6 +460,16 @@ namespace ez
         );
     }
 
+    template<typename T>
+    struct formatter : std::formatter<std::string>
+    {
+        template<class Ctx>
+        Ctx::iterator format(T& x, Ctx& ctx) const
+        {
+            return std::formatter<std::string>::format(sprint(x), ctx);
+        }
+    };
+
 #endif // EZPRINT_ENABLE_FORMAT
 #undef EZPRINT_ENABLE_FORMAT
 

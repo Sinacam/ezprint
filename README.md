@@ -47,6 +47,14 @@ ez::println(
 ez::printf("{:.2f} {}\n", 1., Point{2, 3});  // 1.00 {2 3}
 ```
 
+## Formatter with `ez::print` Semantics (Requires C++20)
+```c++
+template<>
+struct std::formatter<Point> : ez::formatter<Point> {};
+
+std::print("{}\n", Point{1, 2});  // {1 2}
+```
+
 # Usage
 
 ezprint prints [_streamable types_](#Streamable-Types), types that can be streamed through `std::ostream&`, and their composition.
