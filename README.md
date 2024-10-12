@@ -105,16 +105,14 @@ A streamable type is one of the following.
 
 An unstreamable type is printed as an error string. This makes it possible to print types composed of both streamable and unstreamable types.
 
-An exception is aggregates that have members which are empty aggregates, e.g.
+An exception is array members
 ```c++
-struct empty_t {};
-struct pathological_t
+struct A
 {
-    empty_t e;
-    int i;
+    int i[3];
 };
 ```
-`ez::println` will fail to print `pathological_t`.
+`ez::println` will fail to print `A`.
 
 # Remarks
 
